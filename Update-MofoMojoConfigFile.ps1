@@ -6,7 +6,7 @@ function Update-MofoMojoConfigFile {
     .DESCRIPTION
         This function will allow you to change settings in the MofoMojoMod.cfg file
     
-    .PARAMETER SettingstoUpdate
+    .PARAMETER SettingsToUpdate
         The settings you wish to change
     
     .PARAMETER Enable
@@ -49,7 +49,7 @@ function Update-MofoMojoConfigFile {
     }
     
     process {
-        if ($SettingstoUpdate) {
+        if ($SettingsToUpdate) {
             $newCfgFile = ""
             if ( Test-Path -Path (Join-Path -Path $PathToConfigFile -ChildPath $ConfigFileName) ) {
                 $oldCfgFile = Get-Content -Path (join-path -Path $PathToConfigFile -ChildPath $ConfigFileName)
@@ -63,7 +63,7 @@ function Update-MofoMojoConfigFile {
                 return
             }
 
-            foreach ($setting in $SettingstoUpdate) {
+            foreach ($setting in $SettingsToUpdate) {
                 
                 switch ($setting) {
                     "DisableImACheater" {
@@ -109,7 +109,6 @@ function Update-MofoMojoConfigFile {
                     }
                         
                     default { Write-Host "No values changed." }
-                   
                 }
             }
             
