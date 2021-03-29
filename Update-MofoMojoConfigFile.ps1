@@ -39,7 +39,10 @@ function Update-MofoMojoConfigFile {
 
         [Parameter(Position = 1, ParameterSetName = 'Flag')]
         [switch]
-        $Disable
+        $Disable,
+
+        [switch]
+        $OpenConfigFoler
     )
     
     begin {
@@ -50,6 +53,11 @@ function Update-MofoMojoConfigFile {
     
     process {
         $parameters = $PSBoundParameters
+
+        if ($OpenConfigFoler) {
+            Invoke-Item -Path $PathToConfigFile
+            return
+        }
 
         if ($SettingsToUpdate) {
             $oldCfgFile = @()
