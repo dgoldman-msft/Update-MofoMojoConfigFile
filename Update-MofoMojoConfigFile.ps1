@@ -141,8 +141,23 @@ function Set-ConfigurationSetting {
 
     process {
         foreach ($value in $SettingsToUpdate) {
-            if ($Enable) { $script:oldCfgFile = $script:oldCfgFile.Replace("$value = false", "$value = true") }
-            if ($Disable) { $script:oldCfgFile = $script:oldCfgFile.Replace("$value = true", "$value = false") }   
+            if ($Enable) {
+                $script:oldCfgFile = $script:oldCfgFile.Replace("$value = false", "$value = true")
+                $oldsetting = $false
+                $newSetting = $true
+            }
+            if ($Disable) {
+                $script:oldCfgFile = $script:oldCfgFile.Replace("$value = true", "$value = false")
+                $oldsetting = $true
+                $newSetting = $false 
+            }   
+        
+            [PSCustomObject] @{
+                Setting     = $value
+                'Old Value' = $oldSetting
+                'New Value' = $newSetting
+            }
         }
+        Format-Table
     }
 }
