@@ -93,16 +93,23 @@ function Update-MofoMojoConfigFile {
             # We are just viewing the configuration settings only
             
             try {
-                Get-Content -Path ($PathToConfigFile + $ConfigFileName) -ErrorAction Stop
+                $contents = Get-Content -Path ($PathToConfigFile + $ConfigFileName) -ErrorAction Stop
+
+                foreach ($line in $contents) {
+                    if (($line -notmatch '^\w') -or ($line -eq "")) { } else {
+                        $lineContents = $line -split ' '
+                        [PSCustomObject]@{
+                            Setting = $lineContents[0]
+                            Value   = $lineContents[2]  
+`                       }
+                    }
+                }
             }
             catch {
                 Write-Host -ForegroundColor Red "ERROR: " $($error[0].Exception.Message)
             }
         }
-    }
-    
-    end {
-        Write-Host "Finished."
+       
     }
 }
 
