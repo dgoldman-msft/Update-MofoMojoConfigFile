@@ -15,6 +15,12 @@ function Update-MofoMojoConfigFile {
     .PARAMETER Disable
         Set values to falase for disabled
     
+    .PARAMETER UpdatePlugin
+        Switch to update the plugin from the local Git Hub repository
+
+    .PARAMETER OpenConfigFoler
+        Switch to open the configuration folder in Explorer
+
     .EXAMPLE
         Update-MofoMojoMod -Enabled -Settings to update DisableImACheater
 
@@ -42,13 +48,19 @@ function Update-MofoMojoConfigFile {
         $Disable,
 
         [switch]
+        $UpdatePlugin,
+
+        [switch]
         $OpenConfigFoler
     )
     
     begin {
-        $ConfigFolderPath = '\Thunderstore Mod Manager\DataFolder\Valheim\profiles\Default\BepInEx\Config\'
+        $GitRepository = 'C:\GitHub Repository\MofoMojoValheimMod\ValheimJumpMod\bin\Release\'
         $ConfigFileName = 'MofoMojo.cfg'
+        $ConfigFolderPath = '\Thunderstore Mod Manager\DataFolder\Valheim\profiles\Default\BepInEx\Config\'
+        $PluginFolder = '\Thunderstore Mod Manager\DataFolder\Valheim\profiles\Default\BepInEx\plugins'
         $PathToConfigFile = Join-Path $env:APPDATA -ChildPath $ConfigFolderPath
+        $PathToPluginFolder = Join-Path $env:APPDATA -ChildPath $PluginFolder
     }
     
     process {
@@ -57,6 +69,24 @@ function Update-MofoMojoConfigFile {
         if ($OpenConfigFoler) {
             Invoke-Item -Path $PathToConfigFile
             return
+        }
+
+        if ($UpdatePlugin) {
+            try {
+                if ( (Test-Path -Path $GitRepository -ErrorAction Stop) -and (Test-Path -Path $PathToPluginFolder -ErrorAction Stop)) {
+                    if ($files = Copy-Item -Path ( Join-Path -Path $GitRepository -ChildPath '*') -Destination $PluginFolder -PassThru -Force) {
+                        Write-Host -Verbose "Copied new binaries from Git Repositry to plugin folder: " $files
+                        return
+                    }
+                }
+                else {
+                    Write-Host "No binaries updated!"
+                }
+            }
+            catch {
+                Write-Host -ForegroundColor Red "ERROR: " $($error[0].Exception.Message)
+                return
+            }
         }
 
         if ($SettingsToUpdate) {
@@ -101,7 +131,7 @@ function Update-MofoMojoConfigFile {
                         [PSCustomObject]@{
                             Setting = $lineContents[0]
                             Value   = $lineContents[2]  
-`                       }
+                        }
                     }
                 }
             }
@@ -109,7 +139,6 @@ function Update-MofoMojoConfigFile {
                 Write-Host -ForegroundColor Red "ERROR: " $($error[0].Exception.Message)
             }
         }
-       
     }
 }
 
